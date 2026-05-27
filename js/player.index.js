@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let channelData = [];
 
     const DEFAULT_M3U_URL = "https://raw.githubusercontent.com/Rakib49/Rakibiptv/refs/heads/main/aynaott.m3u";
-    const FALLBACK_LOGO = "https://cdn-icons-png.flaticon.com/512/716/716429.png"; 
 
     // DOM Elements
     const menuBtn = document.getElementById("menu-btn");
@@ -34,27 +33,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // --- ☰ হ্যামবার্গার সাইডবার ওপেন/ক্লোজ লজিক ---
-    menuBtn.addEventListener("click", () => {
-        sidebarMenu.classList.add("open");
-        sidebarOverlay.style.display = "block";
-    });
-
-    function hideSidebar() {
-        sidebarMenu.classList.remove("open");
-        sidebarOverlay.style.display = "none";
+    // ☰ সাইডবার কন্ট্রোল
+    if(menuBtn) {
+        menuBtn.addEventListener("click", () => {
+            sidebarMenu.classList.add("open");
+            sidebarOverlay.style.display = "block";
+        });
     }
 
-    closeSidebar.addEventListener("click", hideSidebar);
-    sidebarOverlay.addEventListener("click", hideSidebar);
+    function hideSidebar() {
+        if(sidebarMenu) sidebarMenu.classList.remove("open");
+        if(sidebarOverlay) sidebarOverlay.style.display = "none";
+    }
 
-    // ড্রয়ারের ভেতর ফর্ম টগল
+    if(closeSidebar) closeSidebar.addEventListener("click", hideSidebar);
+    if(sidebarOverlay) sidebarOverlay.addEventListener("click", hideSidebar);
+
     addM3uLink.addEventListener("click", (e) => {
         e.preventDefault();
         m3uForm.classList.toggle("hidden");
     });
 
-    // প্লেলিস্ট লোড
     loadM3uBtn.addEventListener("click", () => {
         const url = m3uInput.value.trim();
         if (!url) {
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loadM3uBtn.innerText = "Loading...";
         fetch(url)
             .then(response => {
-                if (!response.ok) throw new Error("Network response error");
+                if (!response.ok) throw new Error("Network error");
                 return response.text();
             })
             .then(data => {
@@ -80,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     renderChannels(channelData);
                     m3uForm.classList.add("hidden");
                     m3uInput.value = "";
-                    hideSidebar(); // সাকসেসফুলি লোড হলে সাইডবার বন্ধ হবে
+                    hideSidebar();
                 }
             })
             .catch(err => {
@@ -92,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // --- 🛠️ উন্নত ও নিখুঁত M3U লোগো পার্সার লজিক ---
+    // এডভান্সড M3U লোগো পার্সার
     function parseM3U(m3uRaw) {
         const lines = m3uRaw.split("\n");
         const channels = [];
@@ -102,8 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
             if (line.startsWith("#EXTINF:")) {
-                // tvg-logo খোঁজার মাল্টিপল রেগুলার এক্সপ্রেশন (যাতে কোটেশন ছাড়া বা স্পেস ওয়ালা টেক্সটও ডিটেক্ট হয়)
-                const logoMatch = line.match(/tvg-logo="([^"]+)"/) || line.match(/tvg-logo=([^,\s]+)/);
+                // লোগো খোঁজার জন্য নিখুঁত রেগুলার এক্সপ্রেশন
+                const logoMatch = line.match(/tvg-logo="([^"]+)"/) || line.match(/logo="([^"]+)"/);
                 if (logoMatch && logoMatch[1]) {
                     currentLogo = logoMatch[1].trim();
                 } else {
@@ -121,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 channels.push({
                     name: currentName,
                     url: line,
-                    logo: currentLogo || FALLBACK_LOGO
+                    logo: currentLogo
                 });
                 currentName = ""; 
                 currentLogo = "";
@@ -130,24 +129,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return channels;
     }
 
+    // চ্যানেল লিস্ট রেন্ডার
     function renderChannels(channels) {
         channelsUl.innerHTML = "";
         channels.forEach((channel) => {
             const li = document.createElement("li");
             
-            const img = document.createElement("img");
-            img.src = channel.logo;
-            img.alt = ""; 
-            
-            img.onerror = function() {
-                this.src = FALLBACK_LOGO;
-                this.onerror = null;
-            };
+            // যদি লোগো থাকে তবে <img> তৈরি হবে, না থাকলে নামের ১ম অক্ষর দিয়ে টেক্সট-লোগো হবে
+            if (channel.logo && channel.logo.startsWith('http')) {
+                const img = document.createElement("img");
+                img.src = channel.logo;
+                img.alt = "";
+                img.onerror = function() {
+                    // ইমেজ লোড ফেল করলে টেক্সট লোগোতে কনভার্ট হবে
+                    createFallbackLogo(li, channel.name);
+                    this.remove();
+                };
+                li.appendChild(img);
+            } else {
+                createFallbackLogo(li, channel.name);
+            }
 
             const nameSpan = document.createElement("span");
             nameSpan.textContent = channel.name;
-
-            li.appendChild(img);
             li.appendChild(nameSpan);
 
             li.addEventListener("click", function() {
@@ -165,6 +169,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // টেক্সট লোগো বানানোর ফাংশন
+    function createFallbackLogo(parentElement, channelName) {
+        const logoDiv = document.createElement("div");
+        logoDiv.className = "text-logo";
+        logoDiv.textContent = channelName.charAt(0).toUpperCase();
+        
+        // ব্যাকগ্রাউন্ড কালার ডাইনামিক করার জন্য
+        const colors = ['#e50914', '#1db954', '#00bcd4', '#ff9800', '#9c27b0', '#3f51b5'];
+        const charCode = channelName.charCodeAt(0) || 0;
+        logoDiv.style.backgroundColor = colors[charCode % colors.length];
+        
+        parentElement.insertBefore(logoDiv, parentElement.firstChild);
+    }
+
     function playChannel(url) {
         if (player) { player.destroy(); }
         player = new Clappr.Player({
@@ -178,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // রিমুভ প্লেলিস্ট
     removeListLink.addEventListener("click", (e) => {
         e.preventDefault();
         hideSidebar();
