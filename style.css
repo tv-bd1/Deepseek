@@ -1,0 +1,281 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0d0d0d; /* সম্পূর্ণ ডার্ক ব্যাকগ্রাউন্ড */
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header & Navigation */
+.header {
+    background-color: #141414;
+    border-bottom: 1px solid #262626;
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo a {
+    color: #e50914; /* রেড থিম অ্যাকসেন্ট */
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.menu {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.menu a {
+    color: #aaaaaa;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.menu a:hover {
+    color: #ffffff;
+}
+
+#menu-toggle, .menu-icon {
+    display: none;
+}
+
+/* Main Content Layout */
+#main-container {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 25px auto;
+    padding: 0 20px;
+    gap: 25px;
+}
+
+#player-container {
+    flex: 2.2;
+    background-color: #000000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    align-self: flex-start;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    border: 1px solid #1f1f1f;
+}
+
+#channel-list-container {
+    flex: 1;
+    background-color: #141414;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 160px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border: 1px solid #1f1f1f;
+}
+
+#channel-heading {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e50914;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* M3U Form */
+#m3u-link-form {
+    margin-bottom: 15px;
+    background: #1c1c1c;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #2b2b2b;
+}
+
+#m3u-link-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #999;
+}
+
+#m3u-link {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #0d0d0d;
+    border: 1px solid #333333;
+    color: #ffffff;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+#m3u-link:focus {
+    border-color: #e50914;
+}
+
+#load-m3u {
+    width: 100%;
+    padding: 11px;
+    background-color: #e50914;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+#load-m3u:hover {
+    background-color: #b80710;
+}
+
+/* Scrollable Channel List */
+#channel-list {
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 5px;
+}
+
+/* Scrollbar Customization */
+#channel-list::-webkit-scrollbar {
+    width: 6px;
+}
+#channel-list::-webkit-scrollbar-track {
+    background: #141414;
+}
+#channel-list::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+#channel-list::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+#channels {
+    list-style: none;
+}
+
+#channels li {
+    padding: 12px 14px;
+    background-color: #1c1c1c;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #cdcdcd;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid transparent;
+}
+
+#channels li:hover {
+    background-color: #e50914;
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+#channels li.active-channel {
+    background-color: #262626;
+    border-color: #e50914;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Footer */
+footer {
+    background-color: #000000;
+    text-align: center;
+    padding: 15px;
+    font-size: 13px;
+    color: #555555;
+    border-top: 1px solid #141414;
+    margin-top: auto;
+}
+
+/* Custom Alert Dialog */
+#custom-alert-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.alert-content {
+    background-color: #141414;
+    border: 1px solid #262626;
+    padding: 25px 35px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+}
+
+.alert-content p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.alert-content button {
+    padding: 8px 24px;
+    margin: 0 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+#confirm-remove { background-color: #e50914; color: white; }
+#cancel-remove { background-color: #333333; color: white; }
+#cancel-remove:hover { background-color: #444444; }
+
+/* Responsive View */
+@media (max-width: 768px) {
+    #main-container {
+        flex-direction: column;
+        padding: 0 15px;
+        gap: 15px;
+    }
+    #channel-list-container {
+        max-height: 450px;
+    }
+}
