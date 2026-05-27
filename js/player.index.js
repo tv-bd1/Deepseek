@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // ডিফল্ট M3U লিংক (AynaOTT)
     const DEFAULT_M3U_URL = "https://raw.githubusercontent.com/Rakib49/Rakibiptv/refs/heads/main/aynaott.m3u";
 
-    // ডিফল্ট লোগো (যদি কোনো চ্যানেলের লোগো M3U-তে না থাকে তবে এটি দেখাবে)
-    const FALLBACK_LOGO = "images/tv_icon.png"; 
+    // একটি সচল অনলাইন ডিফল্ট ইমেজ (যদি কোনো চ্যানেলের লোগো লোড না হতে পারে তবে এটি ব্যাকআপ হিসেবে কাজ করবে)
+    const FALLBACK_LOGO = "https://cdn-icons-png.flaticon.com/512/716/716429.png"; 
 
     // DOM Elements
     const addM3uLink = document.getElementById("add-m3u-link");
@@ -33,13 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ফর্ম টগল
     addM3uLink.addEventListener("click", (e) => {
         e.preventDefault();
         m3uForm.classList.toggle("hidden");
     });
 
-    // ম্যানুয়াল লোড
     loadM3uBtn.addEventListener("click", () => {
         const url = m3uInput.value.trim();
         if (!url) {
@@ -78,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // আপডেটেড M3U Parser (যা লোগো লিংক বা tvg-logo রিড করতে পারে)
+    // M3U Parser
     function parseM3U(m3uRaw) {
         const lines = m3uRaw.split("\n");
         const channels = [];
@@ -88,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
             if (line.startsWith("#EXTINF:")) {
-                // tvg-logo="URL" খোঁজার লজিক
+                // tvg-logo এক্সট্র্যাক্ট করা
                 const logoMatch = line.match(/tvg-logo="([^"]+)"/);
                 if (logoMatch && logoMatch[1]) {
                     currentLogo = logoMatch[1];
@@ -96,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     currentLogo = "";
                 }
 
-                // চ্যানেল নাম এক্সট্র্যাক্ট করা
                 const commaIndex = line.lastIndexOf(",");
                 if (commaIndex !== -1) {
                     currentName = line.substring(commaIndex + 1).trim();
@@ -108,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 channels.push({
                     name: currentName,
                     url: line,
-                    logo: currentLogo || FALLBACK_LOGO // লোগো না থাকলে ডিফল্ট লোগো বসবে
+                    logo: currentLogo || FALLBACK_LOGO
                 });
                 currentName = ""; 
                 currentLogo = "";
@@ -117,30 +114,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return channels;
     }
 
-    // আপডেটেড চ্যানেল লিস্ট রেন্ডার (লোগো ইমেজ সহ)
+    // চ্যানেল রেন্ডারার (লোগো স্ট্যাবিলাইজার সহ)
     function renderChannels(channels) {
         channelsUl.innerHTML = "";
-        channels.forEach((channel, index) => {
+        channels.forEach((channel) => {
             const li = document.createElement("li");
             
-            // ১. লোগোর জন্য <img> ট্যাগ তৈরি
+            // লোগো ইমেজ তৈরি
             const img = document.createElement("img");
             img.src = channel.logo;
-            img.alt = channel.name;
-            // কোনো কারণে ইমেজ লোড না হলে ডিফল্ট আইকন দেখানোর সেফটি ফিল্টার
+            img.alt = ""; // লাফানো বন্ধ করতে অল্টারনেটিভ টেক্সট খালি রাখা হয়েছে
+            
+            // ইমেজ লোড হতে এরর আসলে সাথে সাথে ব্যাকআপ লোগো সেট হবে এবং লাফাবে না
             img.onerror = function() {
                 this.src = FALLBACK_LOGO;
+                this.onerror = null; // ইনফিনিট লুপ বন্ধ করতে
             };
 
-            // ২. চ্যানেলের নামের জন্য <span> বা টেক্সট নোড তৈরি
             const nameSpan = document.createElement("span");
             nameSpan.textContent = channel.name;
 
-            // ৩. লোগো এবং নামকে <li> এর ভেতরে পুশ করা
             li.appendChild(img);
             li.appendChild(nameSpan);
 
-            // ক্লিক ইভেন্ট
             li.addEventListener("click", function() {
                 document.querySelectorAll("#channels li").forEach(el => el.classList.remove("active-channel"));
                 li.classList.add("active-channel");
@@ -150,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
             channelsUl.appendChild(li);
         });
 
-        // অটো-প্লে ফার্স্ট চ্যানেল
         if (channels.length > 0 && !player) {
             channelsUl.children[0].classList.add("active-channel");
             playChannel(channels[0].url);
@@ -173,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // রিমুভ প্লেলিস্ট
     removeListLink.addEventListener("click", (e) => {
         e.preventDefault();
         alertDialog.style.display = "flex";
