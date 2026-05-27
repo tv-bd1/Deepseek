@@ -10,56 +10,58 @@
     <title>NexoPlayer - Online Live TV Player</title>
     <link rel="shortcut icon" type="x-icon" href="images/tv_icon.png">
     <meta name="title" content="NexoPlayer - Online Live TV Player" />
-    <meta name="description"
-        content="NexoPlayer is an online live TV player that allows users to easily stream their favorite channels in real-time. With a user-friendly interface, it offers a seamless viewing experience across various devices." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nbsoftv.vercel.app/" />
-    <meta property="og:title" content="NexoPlayer - Online Live TV Player" />
-    <meta property="og:description"
-        content="NexoPlayer is an online live TV player that allows users to easily stream their favorite channels in real-time. With a user-friendly interface, it offers a seamless viewing experience across various devices." />
-    <meta property="og:image" content="images/preview.png" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://nbsoftv.vercel.app/" />
-    <meta property="twitter:title" content="NexoPlayer - Online Live TV Player" />
-    <meta property="twitter:description"
-        content="NexoPlayer is an online live TV player that allows users to easily stream their favorite channels in real-time. With a user-friendly interface, it offers a seamless viewing experience across various devices." />
-    <meta property="twitter:image" content="images/preview.png" />
+    <meta name="description" content="NexoPlayer is an online live TV player." />
 </head>
 
 <body>
     <header class="header">
-        <div id="overlay"></div>
         <nav>
             <div class="logo">
                 <a href="#">NexoPlayer</a>
             </div>
-            <input type="checkbox" id="menu-toggle">
-            <label for="menu-toggle" class="menu-icon">&#9776;</label>
-            <ul class="menu">
-                <li><a href="#" id="add-m3u-link">Add M3U Link</a></li>
-                <li><a href="#" id="removelist">Remove Playlist</a></li>
-            </ul>
+            <!-- ৩ লাইনের হ্যামবার্গার মেনু বাটন -->
+            <div class="menu-icon" id="menu-btn">&#9776;</div>
         </nav>
     </header>
 
+    <!-- স্লাইডআউট সাইডবার ড্রয়ার (মেনুর জন্য) -->
+    <div id="sidebar-overlay"></div>
+    <div id="sidebar-menu">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <span id="close-sidebar">&times;</span>
+        </div>
+        <ul>
+            <li><a href="#" id="add-m3u-link">Add M3U Link</a></li>
+            <li><a href="#" id="removelist">Remove Playlist</a></li>
+        </ul>
+        
+        <!-- প্লেলিস্ট অ্যাড করার ফর্মটি এখন মেনুর ভেতরেই থাকবে -->
+        <div id="m3u-link-form" class="hidden">
+            <label for="m3u-link">Add External M3U Link:</label>
+            <input type="url" id="m3u-link" placeholder="Enter M3U URL">
+            <button id="load-m3u">Load Playlist</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <div id="main-container">
-        <div id="player-container">
+        <!-- প্লেয়ার কন্টেইনার (সেন্টার এলাইন করা) -->
+        <div id="player-wrapper">
+            <div id="player-container">
+                <!-- Player will load here -->
             </div>
+        </div>
 
         <div id="channel-list-container">
-            <h2 id="channel-heading" class="hidden">Channels</h2>
-            <div id="m3u-link-form" class="hidden">
-                <label for="m3u-link">Add External M3U Link:</label>
-                <input type="url" id="m3u-link" placeholder="Enter M3U URL">
-                <button id="load-m3u">Load Playlist</button>
-            </div>
-
+            <h2 id="channel-heading">Channels</h2>
             <div id="channel-list">
                 <ul id="channels"></ul>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
         <div id="footer-container">
             <p>&copy; 2024 NexoPlayer. All rights reserved.</p>
@@ -67,6 +69,7 @@
         </div>
     </footer>
 
+    <!-- Custom Alert Dialog -->
     <div id="custom-alert-dialog">
         <div class="alert-content">
             <p>Are you sure you want to remove the playlist?</p>
@@ -76,27 +79,6 @@
     </div>
 
     <script src="js/player.index.js"></script>
-
-    <script>
-        // Disable right-click context menu
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
-
-        // Disable F12, Ctrl+Shift+I, and Ctrl+Shift+C
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) {
-                e.preventDefault();
-            }
-        });
-
-        // Disable Ctrl+U (View Source)
-        document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-            }
-        });
-    </script>
 </body>
 
 </html>
