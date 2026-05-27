@@ -19,53 +19,36 @@
             <div class="logo">
                 <a href="#">NexoPlayer</a>
             </div>
-            <!-- ৩ লাইনের হ্যামবার্গার মেনু বাটন -->
-            <div class="menu-icon" id="menu-btn">&#9776;</div>
+            <!-- স্ক্রিনশটের মতো সরাসরি ডানপাশের অ্যাকশন লিঙ্কসমূহ -->
+            <div class="nav-links">
+                <a href="#" id="add-m3u-link">Add M3U Link</a>
+                <a href="#" id="removelist">Remove Playlist</a>
+            </div>
         </nav>
     </header>
 
-    <!-- স্লাইডআউট সাইডবার ড্রয়ার -->
-    <div id="sidebar-overlay"></div>
-    <div id="sidebar-menu">
-        <div class="sidebar-header">
-            <h3>Menu</h3>
-            <span id="close-sidebar">&times;</span>
-        </div>
-        <ul>
-            <li><a href="#" id="add-m3u-link">Add M3U Link</a></li>
-            <li><a href="#" id="removelist">Remove Playlist</a></li>
-        </ul>
-        
-        <div id="m3u-link-form" class="hidden">
-            <label for="m3u-link">Add External M3U Link:</label>
+    <!-- প্লেলিস্ট অ্যাড করার ফর্ম (যা লিঙ্কে ক্লিক করলে প্লেয়ারের নিচে বা উপরে টগল হবে) -->
+    <div id="m3u-form-container" class="hidden">
+        <div class="m3u-form-content">
             <input type="url" id="m3u-link" placeholder="Enter M3U URL">
             <button id="load-m3u">Load Playlist</button>
         </div>
     </div>
 
-    <!-- Main White Card Wrapper (স্ক্রিনশটের মূল লুকের জন্য) -->
-    <div id="main-card-wrapper">
-        <div id="main-container">
-            <!-- প্লেয়ার কন্টেইনার -->
-            <div id="player-wrapper">
-                <div id="player-container">
-                    <!-- ভিডিও প্লেয়ার লোড হবে এখানে -->
-                    
-                    <!-- ডাইনামিক স্কিপ ওভারলে (যখন চ্যানেল লোড হবে তখন স্ক্রিনে আসবে) -->
-                    <div id="skip-overlay" class="video-skip-overlay hidden">
-                        <button id="skip-channel-btn" class="skip-btn">
-                            <span>Skip Channel &raquo;</span>
-                        </button>
-                    </div>
-                </div>
+    <!-- Main Content Layout -->
+    <div id="main-container">
+        <!-- প্লেয়ার কন্টেইনার -->
+        <div id="player-wrapper">
+            <div id="player-container">
+                <!-- Player will load here -->
             </div>
+        </div>
 
-            <!-- চ্যানেল লিস্ট এরিয়া -->
-            <div id="channel-list-container">
-                <h2 id="channel-heading">Channels</h2>
-                <div id="channel-list">
-                    <ul id="channels"></ul>
-                </div>
+        <!-- চ্যানেল লিস্ট বক্স (হুবহু স্ক্রিনশটের মতো ডার্ক কার্ড থিম) -->
+        <div id="channel-list-container">
+            <h2 id="channel-heading">Channels</h2>
+            <div id="channel-list">
+                <ul id="channels"></ul>
             </div>
         </div>
     </div>
@@ -82,8 +65,10 @@
     <div id="custom-alert-dialog">
         <div class="alert-content">
             <p>Are you sure you want to remove the playlist?</p>
-            <button id="confirm-remove">Yes</button>
-            <button id="cancel-remove">No</button>
+            <div class="alert-btns">
+                <button id="confirm-remove">Yes</button>
+                <button id="cancel-remove">No</button>
+            </div>
         </div>
     </div>
 
