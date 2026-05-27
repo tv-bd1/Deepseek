@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let player = null;
     let channelData = [];
+    let currentChannelIndex = 0; // বর্তমান প্লে হওয়া চ্যানেলের ইনডেক্স ট্র্যাক করার জন্য
 
     const DEFAULT_M3U_URL = "https://raw.githubusercontent.com/Rakib49/Rakibiptv/refs/heads/main/aynaott.m3u";
 
@@ -17,7 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadM3uBtn = document.getElementById("load-m3u");
     
     const channelsUl = document.getElementById("channels");
-    const searchInput = document.getElementById("search-channel");
+    const skipOverlay = document.getElementById("skip-overlay");
+    const skipChannelBtn = document.getElementById("skip-channel-btn");
+
     const alertDialog = document.getElementById("custom-alert-dialog");
     const confirmRemove = document.getElementById("confirm-remove");
     const cancelRemove = document.getElementById("cancel-remove");
@@ -25,11 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
     init();
 
     function init() {
-        // রিয়েল-টাইম সার্চ লিসেনার
-        if (searchInput) {
-            searchInput.addEventListener("input", filterChannels);
-        }
-
         const savedPlaylist = localStorage.getItem("nexo_playlist");
         if (savedPlaylist) {
             channelData = JSON.parse(savedPlaylist);
@@ -37,9 +35,14 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             fetchPlaylist(DEFAULT_M3U_URL);
         }
+
+        // ⏩ স্কিপ বাটন ক্লিক ইভেন্ট লিসেনার
+        if (skipChannelBtn) {
+            skipChannelBtn.addEventListener("click", skipToNextChannel);
+        }
     }
 
-    // ☰ Sidebar Controls
+    // ☰ সাইডবার কন্ট্রোল
     if(menuBtn) {
         menuBtn.addEventListener("click", () => {
             sidebarMenu.classList.add("open");
@@ -70,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function fetchPlaylist(url) {
-        loadM3uBtn.innerText = "Loading Playlist...";
+        loadM3uBtn.innerText = "Loading...";
         fetch(url)
             .then(response => {
                 if (!response.ok) throw new Error("Network error");
@@ -79,10 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 channelData = parseM3U(data);
                 if (channelData.length === 0) {
-                    alert("No channels found in this file!");
+                    alert("No channels found!");
                 } else {
                     localStorage.setItem("nexo_playlist", JSON.stringify(channelData));
-                    if (searchInput) searchInput.value = ""; // সার্চ রিসেট
                     renderChannels(channelData);
                     m3uForm.classList.add("hidden");
                     m3uInput.value = "";
@@ -91,14 +93,13 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(err => {
                 console.error(err);
-                alert("Failed to load M3U playlist. Check CORS or URL accuracy.");
+                alert("Failed to load M3U.");
             })
             .finally(() => {
                 loadM3uBtn.innerText = "Load Playlist";
             });
     }
 
-    // Advanced M3U Parser
     function parseM3U(m3uRaw) {
         const lines = m3uRaw.split("\n");
         const channels = [];
@@ -135,21 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return channels;
     }
 
-    // Render Channels UI
-    function renderChannels(channelsToRender) {
+    // চ্যানেল লিস্ট রেন্ডার
+    function renderChannels(channels) {
         channelsUl.innerHTML = "";
-        
-        if(channelsToRender.length === 0) {
-            const noResult = document.createElement("p");
-            noResult.style.padding = "20px";
-            noResult.style.color = "#64748b";
-            noResult.style.textAlign = "center";
-            noResult.textContent = "No channels matched your search.";
-            channelsUl.appendChild(noResult);
-            return;
-        }
-
-        channelsToRender.forEach((channel) => {
+        channels.forEach((channel, index) => {
             const li = document.createElement("li");
             
             if (channel.logo && channel.logo.startsWith('http')) {
@@ -170,48 +160,61 @@ document.addEventListener("DOMContentLoaded", function () {
             li.appendChild(nameSpan);
 
             li.addEventListener("click", function() {
-                document.querySelectorAll("#channels li").forEach(el => el.classList.remove("active-channel"));
-                li.classList.add("active-channel");
+                currentChannelIndex = index; // বর্তমান ইনডেক্স সেট করুন
+                setActiveChannelUI(index);
                 playChannel(channel.url);
             });
 
             channelsUl.appendChild(li);
         });
 
-        // প্রথমবার লোডে প্রথম চ্যানেল প্লে করা (যদি প্লেয়ার আগে রেডি না থাকে)
-        if (channelsToRender.length > 0 && !player) {
-            channelsUl.children[0].classList.add("active-channel");
-            playChannel(channelsToRender[0].url);
+        if (channels.length > 0 && !player) {
+            currentChannelIndex = 0;
+            setActiveChannelUI(0);
+            playChannel(channels[0].url);
         }
     }
 
-    // Live Instant Search Filter Logic
-    function filterChannels() {
-        const query = searchInput.value.toLowerCase().trim();
-        const filtered = channelData.filter(channel => 
-            channel.name.toLowerCase().includes(query)
-        );
-        renderChannels(filtered);
+    // অ্যাক্টিভ চ্যানেল মার্ক করার ফাংশন
+    function setActiveChannelUI(index) {
+        const listItems = document.querySelectorAll("#channels li");
+        listItems.forEach(el => el.classList.remove("active-channel"));
+        if(listItems[index]) {
+            listItems[index].classList.add("active-channel");
+            // স্ক্রোল পজিশন অটো-অ্যাডজাস্ট করার জন্য
+            listItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
-    // Dynamic High-End Text Logo
+    // ⏩ পরবর্তী চ্যানেলে স্কিপ করার মেইন লজিক
+    function skipToNextChannel() {
+        if (channelData.length === 0) return;
+        
+        // ইনডেক্স ১ বাড়িয়ে পরবর্তী চ্যানেলে যাওয়া (লিস্ট শেষ হলে আবার প্রথমটায় ফিরে আসবে)
+        currentChannelIndex = (currentChannelIndex + 1) % channelData.length;
+        
+        setActiveChannelUI(currentChannelIndex);
+        playChannel(channelData[currentChannelIndex].url);
+    }
+
     function createFallbackLogo(parentElement, channelName) {
         const logoDiv = document.createElement("div");
         logoDiv.className = "text-logo";
         logoDiv.textContent = channelName.charAt(0).toUpperCase();
         
-        // Luxury Neon-Friendly Matte Colors
-        const colors = ['#0f172a', '#1e1b4b', '#064e3b', '#7c2d12', '#4c1d95', '#0369a1'];
+        const colors = ['#e50914', '#1db954', '#00bcd4', '#ff9800', '#9c27b0', '#3f51b5'];
         const charCode = channelName.charCodeAt(0) || 0;
         logoDiv.style.backgroundColor = colors[charCode % colors.length];
-        logoDiv.style.border = "1px solid rgba(255,255,255,0.1)";
         
         parentElement.insertBefore(logoDiv, parentElement.firstChild);
     }
 
-    // Clappr Playback & Auto-Rotate Screen Fix for Mobile Fullscreen
     function playChannel(url) {
         if (player) { player.destroy(); }
+        
+        // প্লেয়ার চালু করার সময় স্কিপ বাটন দেখান
+        if(skipOverlay) skipOverlay.classList.remove("hidden");
+
         player = new Clappr.Player({
             source: url,
             parentId: "#player-container",
@@ -219,17 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
             width: "100%",
             height: "100%",
             autoPlay: true,
-            mimeType: "application/x-mpegURL",
-            events: {
-                onFullscreen: function() {
-                    // ফুলস্ক্রিনে মোবাইল ডিভাইস অটো-রোটেশন হয়ে ল্যান্ডস্কেপ মোডে যাওয়ার চেষ্টা করবে
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock('landscape').catch((err) => {
-                            console.log("Orientation lock not supported or allowed:", err);
-                        });
-                    }
-                }
-            }
+            mimeType: "application/x-mpegURL"
         });
     }
 
@@ -243,10 +236,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     confirmRemove.addEventListener("click", () => {
         localStorage.removeItem("nexo_playlist");
-        channelData = [];
         channelsUl.innerHTML = "";
-        if (searchInput) searchInput.value = "";
         if (player) { player.destroy(); player = null; }
+        if(skipOverlay) skipOverlay.classList.add("hidden");
         alertDialog.style.display = "none";
     });
 });
