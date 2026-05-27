@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Clappr Core & Level Selector -->
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
     <script src="//cdn.jsdelivr.net/gh/clappr/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <title>NexoPlayer - Online Live TV Player</title>
+    <title>NexoPlayer - Premium Live TV Experience</title>
     <link rel="shortcut icon" type="x-icon" href="images/tv_icon.png">
     <meta name="title" content="NexoPlayer - Online Live TV Player" />
-    <meta name="description" content="NexoPlayer is an online live TV player." />
+    <meta name="description" content="NexoPlayer is a premium online live TV player." />
 </head>
 
 <body>
@@ -19,42 +20,51 @@
             <div class="logo">
                 <a href="#">NexoPlayer</a>
             </div>
-            <!-- ৩ লাইনের হ্যামবার্গার মেনু বাটন -->
+            <!-- Neon Hamburger Menu Button -->
             <div class="menu-icon" id="menu-btn">&#9776;</div>
         </nav>
     </header>
 
-    <!-- স্লাইডআউট সাইডবার ড্রয়ার (মেনুর জন্য) -->
+    <!-- Sidebar Drawer -->
     <div id="sidebar-overlay"></div>
     <div id="sidebar-menu">
         <div class="sidebar-header">
-            <h3>Menu</h3>
+            <h3>Navigation</h3>
             <span id="close-sidebar">&times;</span>
         </div>
         <ul>
-            <li><a href="#" id="add-m3u-link">Add M3U Link</a></li>
-            <li><a href="#" id="removelist">Remove Playlist</a></li>
+            <li><a href="#" id="add-m3u-link">Add M3U Playlist</a></li>
+            <li><a href="#" id="removelist">Remove Current Playlist</a></li>
         </ul>
         
-        <!-- প্লেলিস্ট অ্যাড করার ফর্মটি এখন মেনুর ভেতরেই থাকবে -->
+        <!-- Add Playlist Form inside Sidebar only -->
         <div id="m3u-link-form" class="hidden">
-            <label for="m3u-link">Add External M3U Link:</label>
-            <input type="url" id="m3u-link" placeholder="Enter M3U URL">
+            <label for="m3u-link">External M3U URL</label>
+            <input type="url" id="m3u-link" placeholder="https://example.com/playlist.m3u">
             <button id="load-m3u">Load Playlist</button>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Layout -->
     <div id="main-container">
-        <!-- প্লেয়ার কন্টেইনার (সেন্টার এলাইন করা) -->
+        <!-- Player Container -->
         <div id="player-wrapper">
             <div id="player-container">
-                <!-- Player will load here -->
+                <!-- Video Player Will Load Here -->
             </div>
         </div>
 
+        <!-- Channels Container with New Instant Search Box -->
         <div id="channel-list-container">
-            <h2 id="channel-heading">Channels</h2>
+            <h2 id="channel-heading">
+                <span>Live Streams</span>
+            </h2>
+            
+            <!-- Instant Search Input -->
+            <div class="search-box">
+                <input type="text" id="search-channel" placeholder="Search channel name...">
+            </div>
+
             <div id="channel-list">
                 <ul id="channels"></ul>
             </div>
@@ -64,17 +74,17 @@
     <!-- Footer -->
     <footer>
         <div id="footer-container">
-            <p>&copy; 2024 NexoPlayer. All rights reserved.</p>
-            <p>Made with ❤️ by NBSOFTDEV</p>
+            <p>&copy; 2026 NexoPlayer. All rights reserved.</p>
+            <p>Developed with Premium Aesthetics by Rbel Ahmed</p>
         </div>
     </footer>
 
-    <!-- Custom Alert Dialog -->
+    <!-- Custom PopUp Dialog -->
     <div id="custom-alert-dialog">
         <div class="alert-content">
-            <p>Are you sure you want to remove the playlist?</p>
-            <button id="confirm-remove">Yes</button>
-            <button id="cancel-remove">No</button>
+            <p>Are you sure you want to remove this playlist from your storage?</p>
+            <button id="confirm-remove">Yes, Remove</button>
+            <button id="cancel-remove">Cancel</button>
         </div>
     </div>
 
