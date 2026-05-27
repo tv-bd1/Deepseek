@@ -2,8 +2,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let player = null;
     let channelData = [];
 
-    // আপনার দেওয়া ডিফল্ট M3U লিংক
+    // ডিফল্ট M3U লিংক (AynaOTT)
     const DEFAULT_M3U_URL = "https://raw.githubusercontent.com/Rakib49/Rakibiptv/refs/heads/main/aynaott.m3u";
+
+    // ডিফল্ট লোগো (যদি কোনো চ্যানেলের লোগো M3U-তে না থাকে তবে এটি দেখাবে)
+    const FALLBACK_LOGO = "images/tv_icon.png"; 
 
     // DOM Elements
     const addM3uLink = document.getElementById("add-m3u-link");
@@ -20,25 +23,23 @@ document.addEventListener("DOMContentLoaded", function () {
     init();
 
     function init() {
-        // প্রথমে চেক করবে ইউজারের লোকাল স্টোরেজে কোনো প্লেলিস্ট সেভ আছে কিনা
         const savedPlaylist = localStorage.getItem("nexo_playlist");
         if (savedPlaylist) {
             channelData = JSON.parse(savedPlaylist);
             renderChannels(channelData);
             channelHeading.classList.remove("hidden");
         } else {
-            // যদি না থাকে তবে আপনার দেওয়া আয়নাত্ত (AynaOTT) লিংকটি অটো-লোড করবে
             fetchPlaylist(DEFAULT_M3U_URL);
         }
     }
 
-    // ফর্ম হাইড/শো টগল
+    // ফর্ম টগল
     addM3uLink.addEventListener("click", (e) => {
         e.preventDefault();
         m3uForm.classList.toggle("hidden");
     });
 
-    // ম্যানুয়ালি কোনো লিংক লোড করার ইভেন্ট
+    // ম্যানুয়াল লোড
     loadM3uBtn.addEventListener("click", () => {
         const url = m3uInput.value.trim();
         if (!url) {
@@ -48,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchPlaylist(url);
     });
 
-    // প্লেলিস্ট ফেচ করার মেইন ফাংশন
     function fetchPlaylist(url) {
         loadM3uBtn.innerText = "Loading...";
         
@@ -71,22 +71,32 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(err => {
                 console.error(err);
-                alert("Failed to load M3U link. Make sure it's correct and CORS enabled.");
+                alert("Failed to load M3U link.");
             })
             .finally(() => {
                 loadM3uBtn.innerText = "Load Playlist";
             });
     }
 
-    // M3U Parser
+    // আপডেটেড M3U Parser (যা লোগো লিংক বা tvg-logo রিড করতে পারে)
     function parseM3U(m3uRaw) {
         const lines = m3uRaw.split("\n");
         const channels = [];
         let currentName = "";
+        let currentLogo = "";
 
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
             if (line.startsWith("#EXTINF:")) {
+                // tvg-logo="URL" খোঁজার লজিক
+                const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                if (logoMatch && logoMatch[1]) {
+                    currentLogo = logoMatch[1];
+                } else {
+                    currentLogo = "";
+                }
+
+                // চ্যানেল নাম এক্সট্র্যাক্ট করা
                 const commaIndex = line.lastIndexOf(",");
                 if (commaIndex !== -1) {
                     currentName = line.substring(commaIndex + 1).trim();
@@ -97,38 +107,56 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (currentName === "") currentName = "Untitled Channel";
                 channels.push({
                     name: currentName,
-                    url: line
+                    url: line,
+                    logo: currentLogo || FALLBACK_LOGO // লোগো না থাকলে ডিফল্ট লোগো বসবে
                 });
                 currentName = ""; 
+                currentLogo = "";
             }
         }
         return channels;
     }
 
-    // চ্যানেল লিস্ট UI তে দেখানো
+    // আপডেটেড চ্যানেল লিস্ট রেন্ডার (লোগো ইমেজ সহ)
     function renderChannels(channels) {
         channelsUl.innerHTML = "";
         channels.forEach((channel, index) => {
             const li = document.createElement("li");
-            li.textContent = channel.name;
+            
+            // ১. লোগোর জন্য <img> ট্যাগ তৈরি
+            const img = document.createElement("img");
+            img.src = channel.logo;
+            img.alt = channel.name;
+            // কোনো কারণে ইমেজ লোড না হলে ডিফল্ট আইকন দেখানোর সেফটি ফিল্টার
+            img.onerror = function() {
+                this.src = FALLBACK_LOGO;
+            };
+
+            // ২. চ্যানেলের নামের জন্য <span> বা টেক্সট নোড তৈরি
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = channel.name;
+
+            // ৩. লোগো এবং নামকে <li> এর ভেতরে পুশ করা
+            li.appendChild(img);
+            li.appendChild(nameSpan);
+
+            // ক্লিক ইভেন্ট
             li.addEventListener("click", function() {
-                // অ্যাক্টিভ চ্যানেল হাইলাইট করার জন্য
                 document.querySelectorAll("#channels li").forEach(el => el.classList.remove("active-channel"));
                 li.classList.add("active-channel");
-                
                 playChannel(channel.url);
             });
+
             channelsUl.appendChild(li);
         });
 
-        // প্রথম চ্যানেলটি অটোমেটিক চালু হবে
+        // অটো-প্লে ফার্স্ট চ্যানেল
         if (channels.length > 0 && !player) {
             channelsUl.children[0].classList.add("active-channel");
             playChannel(channels[0].url);
         }
     }
 
-    // Clappr প্লেয়ার দিয়ে লাইভ স্ট্রিম চালানো
     function playChannel(url) {
         if (player) {
             player.destroy(); 
@@ -145,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // প্লেলিস্ট রিমুভ করার লজিক
+    // রিমুভ প্লেলিস্ট
     removeListLink.addEventListener("click", (e) => {
         e.preventDefault();
         alertDialog.style.display = "flex";
