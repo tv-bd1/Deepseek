@@ -14,7 +14,7 @@ body {
     min-height: 100vh;
 }
 
-/* Header & Navigation Fixes */
+/* Header & Navigation */
 .header {
     background-color: #141414;
     border-bottom: 1px solid #262626;
@@ -34,26 +34,23 @@ nav {
 }
 
 .logo a {
-    color: #e50914;
-    font-size: 22px;
+    color: #ffffff;
+    font-size: 24px;
     font-weight: bold;
     text-decoration: none;
     letter-spacing: 0.5px;
 }
 
-/* মেনুর ডট/বুলেট পয়েন্ট রিমুভ এবং সোজা লাইনে আনা */
 .menu {
     display: flex;
-    list-style: none; /* বুলেট পয়েন্ট রিমুভ */
+    list-style: none;
     gap: 20px;
-    margin: 0;
-    padding: 0;
 }
 
 .menu a {
     color: #aaaaaa;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     transition: color 0.3s;
 }
@@ -62,8 +59,16 @@ nav {
     color: #ffffff;
 }
 
-#menu-toggle, .menu-icon {
+/* Hamburger Menu Icon (Desktop এ লুকানো থাকবে) */
+#menu-toggle {
     display: none;
+}
+
+.menu-icon {
+    display: none;
+    font-size: 28px;
+    color: #ffffff;
+    cursor: pointer;
 }
 
 /* Main Content Layout */
@@ -92,7 +97,7 @@ nav {
     flex: 1;
     background-color: #141414;
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 160px);
@@ -101,24 +106,18 @@ nav {
 }
 
 #channel-heading {
-    font-size: 16px;
+    font-size: 22px;
     font-weight: 600;
     color: #ffffff;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #e50914;
-    padding-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 20px;
 }
 
 /* Scrollable Channel List */
 #channel-list {
     overflow-y: auto;
     flex: 1;
-    padding-right: 5px;
 }
 
-/* Scrollbar Customization */
 #channel-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -132,79 +131,160 @@ nav {
 
 #channels {
     list-style: none;
+    display: flex;
+    flex-direction: column; /* ডেস্কটপ ও মোবাইলে চ্যানেল নিচে নিচে রাখার জন্য */
+    gap: 12px;
 }
 
-/* চ্যানেল লাইনের আইকন ও লেখার ব্যালেন্স (Flexbox) */
+/* চ্যানেল রো (আইকন + নাম) */
 #channels li {
     display: flex;
-    align-items: center; /* আইকন ও টেক্সট সোজাসুজি রাখবে */
-    gap: 12px; /* আইকন ও লেখার মাঝের দূরত্ব */
-    padding: 10px 14px;
-    background-color: #1c1c1c;
-    margin-bottom: 8px;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 16px;
+    background-color: #141414;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
-    color: #cdcdcd;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
+    font-size: 16px;
+    color: #ffffff;
+    transition: background 0.2s ease;
+    width: 100%; /* মোবাইল স্ক্রিনে পুরো চওড়া হবে */
 }
 
-/* স্ক্রিনশটের মতো গোল লোগো আইকন সাইজ ফিক্স */
+/* লোগো ইমেজ বা আইকন সাইজ */
 #channels li img {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     object-fit: cover;
-    border-radius: 50%; /* লোগো গোল করার জন্য */
-    background-color: #262626;
+    border-radius: 50%;
 }
 
-#channels li:hover {
-    background-color: #e50914;
-    color: #ffffff;
-}
-
-#channels li.active-channel {
-    background-color: #262626;
-    border-color: #e50914;
-    color: #ffffff;
-    font-weight: 600;
+#channels li:hover, #channels li.active-channel {
+    background-color: #1c1c1c;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Footer */
-footer {
-    background-color: #000000;
-    text-align: center;
-    padding: 15px;
-    font-size: 12px;
-    color: #555555;
-    border-top: 1px solid #141414;
-    margin-top: auto;
+/* M3U Form */
+#m3u-link-form {
+    margin-bottom: 15px;
+}
+#m3u-link {
+    width: 100%;
+    padding: 10px;
+    background-color: #222;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+#load-m3u {
+    width: 100%;
+    padding: 10px;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-/* Responsive View for Mobile */
+/* Footer */
+footer {
+    background-color: #0d0d0d;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #aaaaaa;
+    border-top: 1px solid #141414;
+}
+
+/* Custom Alert */
+#custom-alert-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.alert-content {
+    background-color: #141414;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #262626;
+}
+.alert-content button {
+    padding: 8px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#confirm-remove { background-color: #e50914; color: white; }
+#cancel-remove { background-color: #333; color: white; }
+
+/* 📱 মোবাইল ভিউ রেসপন্সিভ ফিক্স (স্ক্রিনশটের মতো হুয়াহু করতে) */
 @media (max-width: 768px) {
+    .menu-icon {
+        display: block; /* মোবাইলে হ্যামবার্গার আইকন দেখাবে */
+    }
+
+    .menu {
+        display: none; /* ডিফল্টভাবে মেনু হাইড থাকবে */
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background-color: #141414;
+        border: 1px solid #262626;
+        padding: 15px;
+        border-radius: 8px;
+        gap: 15px;
+        width: 180px;
+    }
+
+    /* হ্যামবার্গার বাটনে ক্লিক করলে মেনু খোলার জন্য */
+    #menu-toggle:checked ~ .menu {
+        display: flex;
+    }
+
     #main-container {
         flex-direction: column;
         padding: 0 15px;
-        gap: 15px;
+        gap: 20px;
         margin: 15px auto;
     }
+
+    #player-container {
+        width: 100%;
+    }
+
     #channel-list-container {
-        max-height: 400px;
+        max-height: none; /* মোবাইলে পুরো লিস্ট নিচে নামবে */
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
     }
-    nav {
-        flex-direction: row;
-        justify-content: space-between;
+
+    #channel-heading {
+        font-size: 20px;
+        margin-bottom: 15px;
     }
-    .menu {
-        gap: 12px;
+
+    #channels {
+        flex-direction: column; /* নিশ্চিত করবে যাতে চ্যানেলগুলো নিচে নিচে আসে */
     }
-    .menu a {
-        font-size: 13px;
+
+    #channels li {
+        background-color: #141414; /* স্ক্রিনশটের মতো ডার্ক ব্যাকগ্রাউন্ড কার্ড */
+        border: 1px solid #1f1f1f;
     }
 }
