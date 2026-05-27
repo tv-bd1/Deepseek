@@ -3,24 +3,21 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #060608;
-    color: #e2e8f0;
+    background-color: #0d0d0d;
+    color: #e0e0e0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
-/* Header & Navigation with Glassmorphism */
+/* Header & Navigation */
 .header {
-    background: rgba(15, 15, 20, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #141414;
+    border-bottom: 1px solid #222;
     padding: 15px 20px;
     position: sticky;
     top: 0;
@@ -31,246 +28,214 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1300px;
+    max-width: 1250px;
     margin: 0 auto;
     width: 100%;
 }
 
 .logo a {
     color: #ffffff;
-    font-size: 26px;
-    font-weight: 800;
+    font-size: 24px;
+    font-weight: bold;
     text-decoration: none;
-    letter-spacing: 1px;
-    background: linear-gradient(45deg, #00f2fe, #4facfe);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    letter-spacing: 0.5px;
 }
 
 .menu-icon {
     font-size: 26px;
-    color: #00f2fe;
+    color: #ffffff;
     cursor: pointer;
     padding: 5px;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
-}
-
-.menu-icon:hover {
-    color: #ffffff;
-    transform: scale(1.1);
 }
 
 /* Sidebar Menu */
 #sidebar-menu {
-    position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
-    background: rgba(15, 15, 22, 0.95); 
-    backdrop-filter: blur(20px);
-    box-shadow: -10px 0 30px rgba(0,0,0,0.7);
-    z-index: 101; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 30px 20px;
-    display: flex; flex-direction: column; gap: 25px;
-    border-left: 1px solid rgba(0, 242, 254, 0.1);
+    position: fixed; top: 0; right: -280px; width: 280px; height: 100%;
+    background-color: #141414; box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    z-index: 101; transition: right 0.3s ease; padding: 20px;
+    display: flex; flex-direction: column; gap: 20px;
 }
 #sidebar-menu.open { right: 0; }
-.sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; }
-.sidebar-header h3 { font-size: 20px; color: #fff; font-weight: 600; }
-#close-sidebar { font-size: 28px; color: #00f2fe; cursor: pointer; transition: transform 0.2s; }
-#close-sidebar:hover { transform: scale(1.1); color: #fff; }
-#sidebar-menu ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-#sidebar-menu ul li a { color: #94a3b8; text-decoration: none; font-size: 16px; display: block; padding: 12px 15px; border-radius: 8px; transition: all 0.3s; background: rgba(255,255,255,0.02); }
-#sidebar-menu ul li a:hover { color: #fff; background: rgba(0, 242, 254, 0.1); border-left: 3px solid #00f2fe; padding-left: 20px; }
-#sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; display: none; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #262626; padding-bottom: 10px; }
+#close-sidebar { font-size: 28px; color: #aaa; cursor: pointer; }
+#sidebar-menu ul { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+#sidebar-menu ul li a { color: #aaa; text-decoration: none; font-size: 16px; display: block; padding: 8px 0; }
+#sidebar-menu ul li a:hover { color: #fff; }
+#sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: none; }
 
-/* Main Content Layout */
+/* Main Wrapper (স্ক্রিনশটের সেই সাদা মার্জিনসহ বর্ডার বক্স) */
+#main-card-wrapper {
+    background-color: #ffffff;
+    border-radius: 8px;
+    max-width: 1100px;
+    width: calc(100% - 40px);
+    margin: 30px auto;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
 #main-container {
     display: flex;
     flex-direction: row;
-    max-width: 1300px;
-    width: 100%;
-    margin: 30px auto;
-    padding: 0 20px;
-    gap: 30px;
+    gap: 20px;
     align-items: flex-start;
 }
 
 #player-wrapper {
-    flex: 2.2;
+    flex: 1.8;
     width: 100%;
 }
 
 #player-container {
     width: 100%;
     background-color: #000000;
-    border-radius: 16px;
+    border-radius: 6px;
     overflow: hidden;
     aspect-ratio: 16/9;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
     position: relative;
 }
 
-/* Channel List Container (Luxury Glossy Box) */
+/* চ্যানেল লিস্ট বক্স (হুবহু স্ক্রিনশটের মতো থিম) */
 #channel-list-container {
-    flex: 1.1;
+    flex: 1;
     width: 100%;
-    background: rgba(20, 20, 27, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-    max-height: 600px;
+    border: 1px solid #eaeaea;
 }
 
 #channel-heading {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
     margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Premium Search Bar */
-.search-box {
-    width: 100%;
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 12px 16px;
-    background: rgba(30, 30, 40, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.3s;
-}
-
-.search-box input:focus {
-    border-color: #00f2fe;
-    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
-    background: rgba(30, 30, 40, 0.9);
 }
 
 #channel-list {
+    max-height: 420px;
     overflow-y: auto;
     padding-right: 5px;
-    flex-grow: 1;
 }
 
-#channel-list::-webkit-scrollbar { width: 6px; }
-#channel-list::-webkit-scrollbar-track { background: transparent; }
-#channel-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-#channel-list::-webkit-scrollbar-thumb:hover { background: #00f2fe; }
+#channel-list::-webkit-scrollbar { width: 4px; }
+#channel-list::-webkit-scrollbar-track { background: #f5f5f5; }
+#channel-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 
 #channels {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* Channel Row Premium Design */
+/* চ্যানেল রো ডিজাইন (হোয়াইট লাক্সারি মোড) */
 #channels li {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
-    border-radius: 10px;
+    gap: 12px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 15px;
-    color: #cbd5e1;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 56px;
+    font-size: 14px;
+    color: #444444;
+    transition: all 0.2s ease;
+    height: 50px;
 }
 
 #channels li img {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
     object-fit: cover;
     border-radius: 50%;
-    background-color: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #eee;
 }
 
 .text-logo {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
     font-weight: bold;
-    font-size: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-size: 14px;
 }
 
-#channels li:hover {
-    background: rgba(0, 242, 254, 0.05);
-    border-color: rgba(0, 242, 254, 0.2);
-    color: #ffffff;
-    transform: translateX(4px);
+#channels li:hover, #channels li.active-channel {
+    background-color: #f9f9f9;
+    color: #000000;
+    border-color: #b91c1c; /* অ্যাক্টিভ বর্ডার কালার */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-#channels li.active-channel {
-    background: linear-gradient(90deg, rgba(0, 242, 254, 0.15), rgba(79, 172, 254, 0.05));
-    border-color: #00f2fe;
-    color: #ffffff;
-    box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+/* 🎥 ভিডিও ওভারলেতে 'Skip' বাটনের স্টাইল */
+.video-skip-overlay {
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+}
+
+.skip-btn {
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border: 1px solid #444;
+    padding: 8px 16px;
+    font-size: 13px;
     font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
 }
 
-/* Forms & UI Inside Sidebar */
-#m3u-link-form { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }
-#m3u-link-form label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 8px; }
-#m3u-link { width: 100%; padding: 12px; background-color: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #fff; border-radius: 8px; margin-bottom: 12px; outline: none; }
-#m3u-link:focus { border-color: #00f2fe; }
-#load-m3u { width: 100%; padding: 12px; background: linear-gradient(45deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
-#load-m3u:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5); }
+.skip-btn:hover {
+    background: #000;
+    border-color: #fff;
+    transform: scale(1.05);
+}
+
+/* Forms & UI Elements */
+#m3u-link-form { margin-top: 15px; border-top: 1px solid #262626; padding-top: 15px; }
+#m3u-link { width: 100%; padding: 10px; background-color: #222; border: 1px solid #333; color: #fff; border-radius: 6px; margin-bottom: 10px; }
+#load-m3u { width: 100%; padding: 10px; background-color: #e50914; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
 .hidden { display: none !important; }
 
 /* Footer */
-footer { background-color: #060608; text-align: center; padding: 25px; font-size: 13px; color: #475569; border-top: 1px solid rgba(255,255,255,0.03); margin-top: auto; }
-footer p { margin-bottom: 5px; }
+footer { background-color: #111111; text-align: center; padding: 20px; font-size: 12px; color: #777777; border-top: 1px solid #1a1a1a; margin-top: auto; }
 
-/* Custom Luxury PopUp Alert */
-#custom-alert-dialog { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1002; }
-.alert-content { background-color: #14141d; padding: 30px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-width: 350px; width: 90%; }
-.alert-content p { font-size: 16px; color: #fff; margin-bottom: 20px; }
-.alert-content button { padding: 10px 24px; margin: 0 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s; }
-#confirm-remove { background: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-#confirm-remove:hover { background: #dc2626; transform: translateY(-1px); }
-#cancel-remove { background: #334155; color: #cbd5e1; }
-#cancel-remove:hover { background: #475569; }
+/* Custom Alert */
+#custom-alert-dialog { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1002; }
+.alert-content { background-color: #141414; padding: 25px; border-radius: 8px; text-align: center; border: 1px solid #262626; }
+.alert-content button { padding: 8px 20px; margin: 10px; border: none; border-radius: 4px; cursor: pointer; }
+#confirm-remove { background-color: #e50914; color: white; }
+#cancel-remove { background-color: #333; color: white; }
 
-/* 📱 Mobile Responsive Optimization */
-@media (max-width: 900px) {
+/* 📱 মোবাইল রেসপন্সিভ (স্ক্রিনশটের মতো প্লেয়ার উপরে, লিস্ট নিচে করার জন্য) */
+@media (max-width: 768px) {
+    #main-card-wrapper {
+        width: calc(100% - 20px);
+        margin: 15px auto;
+        padding: 10px;
+    }
     #main-container {
         flex-direction: column;
-        align-items: center;
-        padding: 0 15px;
-        margin: 15px auto;
-        gap: 20px;
     }
     #player-wrapper, #channel-list-container {
         max-width: 100%;
-    }
-    #channel-list-container {
-        max-height: 450px;
     }
 }
